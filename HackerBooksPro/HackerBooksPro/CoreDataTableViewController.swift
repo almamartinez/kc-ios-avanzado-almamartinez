@@ -63,6 +63,7 @@ extension CoreDataTableViewController{
             guard let sections = fc.sections else {
                 return 1
             }
+            
             return sections.count
         }else{
             return 0

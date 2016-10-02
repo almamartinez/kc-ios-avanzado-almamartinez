@@ -2,13 +2,13 @@
 //  Tag+CoreDataProperties.swift
 //  HackerBooksPro
 //
-//  Created by Alma Martinez on 24/9/16.
+//  Created by Alma Martinez on 1/10/16.
 //  Copyright © 2016 Alma Martinez. All rights reserved.
 //
 
 import Foundation
 import CoreData
-
+ 
 
 extension Tag {
 

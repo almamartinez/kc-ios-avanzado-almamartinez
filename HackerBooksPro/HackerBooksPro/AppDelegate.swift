@@ -11,11 +11,12 @@ import Foundation
 import CoreData
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate{
 
     var window: UIWindow?
-    let model = CoreDataStack(modelName: "Model")!
+    static let model = CoreDataStack(modelName: "Model")!
     static let urlJSON = "https://t.co/K9ziV0z3SJ"
+    
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -35,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func initializeData(doIt: Bool){
         if doIt {
             do{
-                try model.dropAllData()
+                try AppDelegate.model.dropAllData()
                 let usrDef = UserDefaults()
                 usrDef.removeObject(forKey: AppDelegate.FirstLoadKey)
                 
@@ -59,21 +60,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          
         // Creamos el fetchedResultsCtrl
         let fc = NSFetchedResultsController(fetchRequest: fr,
-                                            managedObjectContext: model.context,
-                                            sectionNameKeyPath: "tag.order",
+                                            managedObjectContext: AppDelegate.model.context,
+                                            sectionNameKeyPath: "tag.name",
                                             cacheName: nil)
  
         
         // Creamos el rootVC
         let nVC = LibraryViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, style: .grouped)
         let navVC = UINavigationController(rootViewController: nVC)
+        //Buscamos el último libro, por si existiese:
+        let usrDef = UserDefaults()
+        
+        if let b = usrDef.value(forKey: AppDelegate.LastBookVisitedKey) as! Data?,
+            let book = Utils.objectWithArchivedURIRepresentation(archivedURI: b, context: AppDelegate.model.context){
+            // Create the VC
+            let bookVC = BookViewController(model: book)
+            navVC.pushViewController(bookVC, animated: true)
+        }
+        
         self.window?.rootViewController = navVC
         // Display
         self.window?.makeKeyAndVisible()
+        
 
     }
     
     static let FirstLoadKey = "FirstLoadKey"
+    static let LastBookVisitedKey = "LastBookVisited"
     
     func loadDataFirstTime()  {
         //Miramos si es la primera vez que se abre la app.
@@ -95,12 +108,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     DispatchQueue.main.async {
                         //Marcamos como hecha la primera carga
                         usrDef.setValue(true, forKey: AppDelegate.FirstLoadKey)
-                        self.model.performBackgroundBatchOperation({ (bg) in
+                        AppDelegate.model.performBackgroundBatchOperation({ (bg) in
                             let books = try! decode(books: jsonDicts, bgContext: bg)
                             _ = Tag(name: TagConstants.favoriteTag, inContext: bg)
                             
                             books.forEach{ print($0) }
-                            self.model.save()
+                            AppDelegate.model.save()
                         })
                         
                         self.loadDataToTableView()

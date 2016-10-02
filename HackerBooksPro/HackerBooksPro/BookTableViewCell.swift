@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class BookTableViewCell: UITableViewCell {
 
@@ -14,10 +15,11 @@ class BookTableViewCell: UITableViewCell {
     static let cellID = "BookTableViewCellId"
     static let cellHeight : CGFloat = 66.0
     
-    
     //MARK: - private interface
     private
     var _book : Book?
+    private
+    var _context : NSManagedObjectContext?
     
     private
     let _nc = NotificationCenter.default
@@ -36,11 +38,11 @@ class BookTableViewCell: UITableViewCell {
     // in this case
     func startObserving(book: Book){
         _book = book
-      /*  _nc.addObserver(forName: BookCoverImageDidDownload, object: _book, queue: nil) { (n: Notification) in
+        _nc.addObserver(forName: AsyncDataDidEndLoading, object: _book?.bookCover, queue: nil) { (n: Notification) in
+            AppDelegate.model.save()
             self.syncWithBook()
-        }*/
+        }
         syncWithBook()
-
         
     }
     

@@ -2,13 +2,13 @@
 //  Book+CoreDataProperties.swift
 //  HackerBooksPro
 //
-//  Created by Alma Martinez on 25/9/16.
+//  Created by Alma Martinez on 1/10/16.
 //  Copyright © 2016 Alma Martinez. All rights reserved.
 //
 
 import Foundation
 import CoreData
-
+ 
 
 extension Book {
 
@@ -16,8 +16,8 @@ extension Book {
         return NSFetchRequest<Book>(entityName: "Book");
     }
 
-    @NSManaged public var tittle: String?
     @NSManaged public var isFavourite: Bool
+    @NSManaged public var tittle: String?
     @NSManaged public var authors: NSSet?
     @NSManaged public var bookCover: BookCover?
     @NSManaged public var bookTags: NSSet?

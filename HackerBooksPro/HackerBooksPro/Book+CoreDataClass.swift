@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 
-public class Book: NSManagedObject {
+public class Book: NSManagedObject{
 
     static let entityName = "Book"
     
@@ -44,11 +44,25 @@ public class Book: NSManagedObject {
 
 }
 
-/*
+let BookKey = "io.keepCoding.BookDidChange.BookKey"
+extension Book{
+    
+    func sendNotification(name: Notification.Name){
+        
+        let n = Notification(name: name, object: self, userInfo: [BookKey:self])
+        let nc = NotificationCenter.default
+        nc.post(n)
+        
+    }
+}
+
+
+
+let BookDidChange = Notification.Name(rawValue: "io.keepCoding.BookDidChange")
 
 //MARK: - KVO: Key Value Observer
 extension Book{
-    static func observableKeys() -> [String] {return ["name", "booksTag"]}
+    static func observableKeys() -> [String] {return ["isFavourite"]}
     
     func setupKVO(){
         
@@ -71,6 +85,26 @@ extension Book{
         }
         
         
+    }
+    
+        public override func observeValue(forKeyPath keyPath: String?,
+                                      of object: Any?,
+                                      change: [NSKeyValueChangeKey : Any]?,
+                                      context: UnsafeMutableRawPointer?) {
+        
+        let notificationName : Notification.Name
+        
+        
+        switch keyPath! {
+        case "isFavourite" :
+            notificationName = BookDidChange
+            
+        default:
+            fatalError("Should never get here")
+        }
+        
+        
+        sendNotification(name: notificationName)
     }
 }
 
@@ -98,4 +132,4 @@ extension Book{
         teardownKVO()
     }
 }
- */
+

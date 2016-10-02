@@ -10,16 +10,18 @@ import UIKit
 import CoreData
 
 class LibraryViewController: CoreDataTableViewController{
-    
+   // var delegate : LibraryViewControllerDelegate?
 }
 
 // MARK: - DataSource
 extension LibraryViewController{
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "HackerBooksPro"
+        //title = "HackerBooksPro"
         registerNib()
     }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return BookTableViewCell.cellHeight
     }
@@ -27,14 +29,7 @@ extension LibraryViewController{
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
        
-        
-        
-        // Averiguar el book:
-        let x = fetchedResultsController?.object(at: indexPath) as! BookTag
-        print(type(of: x))
-        
-        let book = x.book!
-        
+        let book = getBook(atIndexPath: indexPath)
         
         // Crear la celda
         let cell = tableView.dequeueReusableCell(withIdentifier: BookTableViewCell.cellID,
@@ -42,11 +37,31 @@ extension LibraryViewController{
        
         cell.startObserving(book: book)
         
-        
 
         // Devolverla
         return cell
         
+    }
+    
+    func getBook(atIndexPath : IndexPath) -> Book {
+        // Averiguar el book:
+        let x = fetchedResultsController?.object(at: atIndexPath) as! BookTag
+        //print(type(of: x))
+        
+        return x.book!
+    }
+    
+    //MARK: - Delegate
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        // Get the book
+        let book = getBook(atIndexPath: indexPath)
+        
+        // Create the VC
+        let bookVC = BookViewController(model: book)
+        
+        // Load it
+        navigationController?.pushViewController(bookVC, animated: true)
     }
 
     
@@ -56,5 +71,10 @@ extension LibraryViewController{
         let nib = UINib(nibName: "BookTableViewCell", bundle: Bundle.main)
         tableView.register(nib, forCellReuseIdentifier: BookTableViewCell.cellID)
     }
+    
+    
 }
-
+//MARK: - Delegate protocol
+protocol LibraryViewControllerDelegate {
+    func libraryViewController(_ sender: LibraryViewController, didSelect selectedBook:Book)
+}

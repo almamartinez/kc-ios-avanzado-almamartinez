@@ -9,10 +9,11 @@
 import Foundation
 import CoreData
 import UIKit
-
+let AsyncDataDidEndLoading = Notification.Name(rawValue: "io.keepCoding.AsyncDataDidEndLoading")
 public class BookCover: NSManagedObject {
 
     static let entityName = "BookCover"
+    weak var delegate : AsyncDataDelegate?
     
     var image : UIImage?{
         get{
@@ -20,6 +21,9 @@ public class BookCover: NSManagedObject {
                 let mainBundle = Bundle.main
                 let defaultImageUrl = mainBundle.url(forResource: "emptyBookCover", withExtension: "png")!
                 let dt = try! Data(contentsOf: defaultImageUrl)
+                
+                self.loadData()
+                
                 return UIImage(data: dt)
             }
             return  UIImage(data : data as Data)!
@@ -53,4 +57,37 @@ public class BookCover: NSManagedObject {
         self.urlCover = imageUrl
         self.image = image
     }
+    
+    private
+    func loadData(){
+        
+        DispatchQueue.global(qos: .default).async {
+            
+            let tmpData = try! Data(contentsOf: URL(string: self.urlCover!)!)
+            
+            DispatchQueue.main.async {
+                
+                self.image = UIImage(data: tmpData)
+                self.delegate?.asyncData(self, didEndLoadingFrom: URL(string: self.urlCover!)!)
+                self.sendNotification()
+            }
+        }
+        
+       
+    }
+    
+    
+    func sendNotification(){
+        
+        let n = Notification(name: AsyncDataDidEndLoading,
+                             object: self, userInfo: ["url" : urlCover, "data" : imageCover])
+        
+        let nc = NotificationCenter.default
+        
+        nc.post(n)
+        
+    }
+    
+
+
 }

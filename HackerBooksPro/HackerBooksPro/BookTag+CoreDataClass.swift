@@ -18,7 +18,7 @@ public class BookTag: NSManagedObject {
         self.init(entity: entidad, insertInto: context)
         
         self.book = book
-        self.tag = tag        
+        self.tag = tag
         
     }
 
