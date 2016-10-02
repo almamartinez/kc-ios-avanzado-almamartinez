@@ -138,7 +138,6 @@ class PhotoViewController: UIViewController {
     
     func syncViewModel(){
         model.photo?.image = photoView.image
-        AppDelegate.model.save()
     }
 
 }

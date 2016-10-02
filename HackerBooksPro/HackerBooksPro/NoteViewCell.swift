@@ -31,10 +31,6 @@ class NoteViewCell: UICollectionViewCell {
     // in this case
     func startObserving(note: Note){
         _note = note
-        _nc.addObserver(forName: AsyncDataDidEndLoading, object: _note, queue: nil) { (n: Notification) in
-            AppDelegate.model.save()
-            self.syncWithNote()
-        }
         syncWithNote()
         
     }

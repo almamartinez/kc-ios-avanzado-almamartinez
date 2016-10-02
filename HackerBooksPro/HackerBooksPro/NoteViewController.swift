@@ -49,7 +49,6 @@ class NoteViewController: UIViewController {
     
     func syncViewModel(){
         model.text = textView.text
-        AppDelegate.model.save()
     }
 }
 
