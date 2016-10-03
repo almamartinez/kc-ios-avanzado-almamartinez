@@ -151,8 +151,8 @@ extension CoreDataCollectionViewController: NSFetchedResultsControllerDelegate{
             collectionView?.reloadItems(at: [indexPath!])
             
         case .move:
-            collectionView?.reloadItems(at: [indexPath!])
-            collectionView?.reloadItems(at: [newIndexPath!])
+            collectionView?.reloadData()
+             
             /*collectionView?.deleteItems(at: [indexPath!])
             collectionView?.insertItems(at: [newIndexPath!]
             )*/
