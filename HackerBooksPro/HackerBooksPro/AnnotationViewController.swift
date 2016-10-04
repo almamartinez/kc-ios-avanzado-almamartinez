@@ -11,9 +11,13 @@ import UIKit
 import CoreData
 
 class AnnotationViewController: CoreDataCollectionViewController {
+    fileprivate let sectionInsets = UIEdgeInsets(top: 50.0, left: 10.0, bottom: 50.0, right: 10.0)
+    fileprivate let itemsPerRow: CGFloat = 2
 }
 
 extension AnnotationViewController{
+    
+    
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
@@ -23,7 +27,7 @@ extension AnnotationViewController{
         // Crear la celda
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NoteViewCell.cellID, for: indexPath) as! NoteViewCell
         
-        cell.startObserving(note: x)
+        cell.startContent(note: x,withDelegate: self)
         
         // Devolverla
         return cell
@@ -70,4 +74,44 @@ extension AnnotationViewController{
 
     }
 
+}
+
+extension AnnotationViewController: UICollectionViewDelegateFlowLayout{
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        //2
+        let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
+        let availableWidth = view.frame.width - paddingSpace
+        let widthPerItem = availableWidth / itemsPerRow
+        
+        return CGSize(width: widthPerItem, height: widthPerItem)
+    }
+    
+    //3
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        return sectionInsets
+    }
+    
+    // 4
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return sectionInsets.left
+    }
+}
+
+extension AnnotationViewController: deleteNoteDelegate{
+    internal func performDeletion(ofNote: Note) {
+        AppDelegate.model.context.delete(ofNote)
+        AppDelegate.model.save()
+    }
+
+    
+}
+
+protocol deleteNoteDelegate {
+    func performDeletion(ofNote: Note)
 }

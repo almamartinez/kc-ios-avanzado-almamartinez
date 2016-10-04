@@ -22,43 +22,43 @@ class NoteViewCell: UICollectionViewCell {
     private
     var _noteObserver : NSObjectProtocol?
     
+    var delegate: deleteNoteDelegate?
     
+    
+    @IBOutlet weak var textoNota: UILabel!
     @IBOutlet weak var imgNote: UIImageView!
-    @IBOutlet weak var textoNota: UITextView!
     //MARK: - Bending the MVC
     // The view will directly observe the model
     // This is OK, when the view is highly specific as
     // in this case
-    func startObserving(note: Note){
+    func startContent(note: Note, withDelegate: deleteNoteDelegate?){
         _note = note
+        delegate = withDelegate
         syncWithNote()
         
     }
     
-    func stopObserving(){
-        
-        if let observer = _noteObserver{
-            _nc.removeObserver(observer)
+    func viewWillDisappear(){
             _noteObserver = nil
             _note = nil
-        }
-        
     }
+
+
     @IBAction func deleteNote(_ sender: UIButton) {
-        AppDelegate.model.context.delete(_note!)
-        stopObserving()
+        delegate?.performDeletion(ofNote: _note!)
+        viewWillDisappear()
     }
     
     //MARK: - Lifecycle
     
     // Sets the view in a neutral state, before being reused
     override func prepareForReuse() {
-        stopObserving()
-        syncWithNote()
+        viewWillDisappear()
+       // syncWithNote()
     }
     
     deinit {
-        stopObserving()
+        viewWillDisappear()
     }
     
     //MARK: - Utils
