@@ -14,10 +14,11 @@ class BookViewController: UIViewController {
 
     //MARK: - Init
     var _model : Book
-    //let _delegate : DatasourceChangedDelegate
+    let _delegate : FavoritesDelegate
     
-    init(model: Book){
+    init(model: Book, delegate: FavoritesDelegate){
         _model = model
+        _delegate = delegate
        // _delegate = withDelegate
         super.init(nibName: nil, bundle: nil)
         
@@ -83,19 +84,7 @@ class BookViewController: UIViewController {
                 
             }else
             {
-                let fr2 = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
-                fr2.fetchBatchSize = 50
-                fr2.predicate = NSPredicate(format: "SELF == %@", bt)
-                
-                let resBookTags = try AppDelegate.model.context.fetch(fr2)
-                if resBookTags.count > 0 {
-                    let fRes = resBookTags[0]
-                    _model.removeFromBookTags(bt)
-                    t.removeFromBooksTag(bt)
-                    AppDelegate.model.context.delete(fRes)
-                    AppDelegate.model.save()
-                }
-                
+                _delegate.deleteBookFromFavorites(book: _model)
             }
             
         }catch let e as NSError{
@@ -161,7 +150,7 @@ class BookViewController: UIViewController {
     
 }
 
-extension BookViewController: LibraryViewControllerDelegate{
+/*extension BookViewController: LibraryViewControllerDelegate{
     
     func libraryViewController(_ sender: LibraryViewController,
                                didSelect selectedBook:Book){
@@ -171,6 +160,6 @@ extension BookViewController: LibraryViewControllerDelegate{
         startObserving(book: selectedBook)
         
     }
-}
+}*/
 
 

@@ -22,12 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
                      didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Create the window
         window = UIWindow.init(frame: UIScreen.main.bounds)
+        
+        // SI QUEREMOS QUE CARGE DE 0, PASAR TRUE AQUÍ!!
         initializeData(doIt: false)
+        
         // Create the model
-        loadDataFirstTime()
-        // Create the rootVC
-        //let rootVC = LibraryViewController(model: model!, style: .plain)
-        //window?.rootViewController = rootVC.wrappedInNavigationController()
+        loadData()
         
         return true
     }
@@ -74,7 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         if let b = usrDef.value(forKey: AppDelegate.LastBookVisitedKey) as! Data?,
             let book = Utils.objectWithArchivedURIRepresentation(archivedURI: b, context: AppDelegate.model.context){
             // Create the VC
-            let bookVC = BookViewController(model: book)
+            let bookVC = BookViewController(model: book, delegate: nVC)
             navVC.pushViewController(bookVC, animated: true)
         }
         
@@ -88,7 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let FirstLoadKey = "FirstLoadKey"
     static let LastBookVisitedKey = "LastBookVisited"
     
-    func loadDataFirstTime()  {
+    func loadData()  {
         //Miramos si es la primera vez que se abre la app.
         let usrDef = UserDefaults()
         if usrDef.object(forKey: AppDelegate.FirstLoadKey) != nil{

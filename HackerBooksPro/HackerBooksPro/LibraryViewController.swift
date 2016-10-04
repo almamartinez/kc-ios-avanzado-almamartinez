@@ -58,7 +58,7 @@ extension LibraryViewController{
         let book = getBook(atIndexPath: indexPath)
         
         // Create the VC
-        let bookVC = BookViewController(model: book)
+        let bookVC = BookViewController(model: book, delegate:self)
         
         // Load it
         navigationController?.pushViewController(bookVC, animated: true)
@@ -74,7 +74,46 @@ extension LibraryViewController{
     
     
 }
+
+extension LibraryViewController: FavoritesDelegate{
+    func deleteBookFromFavorites(book:Book){
+        do{
+            // Creamos el fetchRequest para sacar el Tag Favoritos
+            let fr = NSFetchRequest<Tag>(entityName: Tag.entityName)
+            fr.fetchBatchSize = 50
+            fr.predicate = NSPredicate(format: "name == %@", TagConstants.favoriteTag)
+            let res = try AppDelegate.model.context.fetch(fr)
+            var t : Tag
+            if res.count>0{
+                t = res[0]
+                
+            }else {
+                t = Tag(name: TagConstants.favoriteTag, inContext: AppDelegate.model.context)
+            }
+
+            //Lo mismo para el libro: 
+            let bt = BookTag(book: book, tag: t, inContext: (fetchedResultsController?.managedObjectContext)!)
+            let fr2 = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
+            fr2.fetchBatchSize = 50
+            fr2.predicate = NSPredicate(format: "SELF == %@", bt)
+            
+            let resBookTags = try AppDelegate.model.context.fetch(fr2)
+            if resBookTags.count > 0 {
+                let fRes = resBookTags[0]
+                book.removeFromBookTags(bt)
+                t.removeFromBooksTag(bt)
+                fetchedResultsController?.managedObjectContext.delete(fRes)
+                AppDelegate.model.save()
+            }
+            
+        }catch let e as NSError{
+            print("Error while trying to perform a search: \n\(e)")
+        }
+    }
+}
+
 //MARK: - Delegate protocol
-protocol LibraryViewControllerDelegate {
-    func libraryViewController(_ sender: LibraryViewController, didSelect selectedBook:Book)
+protocol FavoritesDelegate {
+    //func libraryViewController(_ sender: LibraryViewController, didSelect selectedBook:Book)
+    func deleteBookFromFavorites(book:Book)
 }
