@@ -2,7 +2,7 @@
 //  BookTag+CoreDataProperties.swift
 //  HackerBooksPro
 //
-//  Created by Alma Martinez on 24/9/16.
+//  Created by Alma Martinez on 5/10/16.
 //  Copyright © 2016 Alma Martinez. All rights reserved.
 //
 
@@ -16,6 +16,7 @@ extension BookTag {
         return NSFetchRequest<BookTag>(entityName: "BookTag");
     }
 
+    @NSManaged public var name: String?
     @NSManaged public var book: Book?
     @NSManaged public var tag: Tag?
 

@@ -12,6 +12,8 @@ import CoreData
 
 class BookViewController: UIViewController {
 
+    let db = CoreDataStack.defaultStack(modelName: DATABASE)!
+
     //MARK: - Init
     var _model : Book
     let _delegate : FavoritesDelegate
@@ -53,7 +55,7 @@ class BookViewController: UIViewController {
         
         // Creamos el fetchedResultsCtrl
         let fc = NSFetchedResultsController(fetchRequest: fr,
-                                            managedObjectContext: AppDelegate.model.context,
+                                            managedObjectContext: db.context,
                                             sectionNameKeyPath: nil,
                                             cacheName: nil)
         let notesVC = AnnotationViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, layout: UICollectionViewFlowLayout(), book: _model)
@@ -61,40 +63,17 @@ class BookViewController: UIViewController {
         navigationController?.pushViewController(notesVC, animated: true)
     }
     
-    func changeFavourite()  {
-        do{
-            // Creamos el fetchRequest
-            let fr = NSFetchRequest<Tag>(entityName: Tag.entityName)
-            fr.fetchBatchSize = 50
-            fr.predicate = NSPredicate(format: "name == %@", TagConstants.favoriteTag)
-            
-            
-            let res = try AppDelegate.model.context.fetch(fr)
-            var t : Tag
-            if res.count>0{
-                t = res[0]
-                
-            }else {
-                t = Tag(name: TagConstants.favoriteTag, inContext: AppDelegate.model.context)
-            }
-            let bt = BookTag(book: _model, tag: t, inContext: AppDelegate.model.context)
-            
-            if !_model.isFavourite{
-                _model.addToBookTags(bt)
-                
-            }else
-            {
-                _delegate.deleteBookFromFavorites(book: _model)
-            }
-            
-        }catch let e as NSError{
-            print("Error while trying to perform a search: \n\(e)")
-        }
-    }
-    
+        
     @IBAction func switchFavorite(_ sender: AnyObject) {
     
-        self.changeFavourite()
+        if !_model.isFavourite{
+            _delegate.addBookToFavorites(book: _model)
+            
+        }else
+        {
+            _delegate.deleteBookFromFavorites(book: _model)
+        }
+
         _model.isFavourite = !_model.isFavourite
     }
     //MARK: - Syncing
@@ -137,8 +116,7 @@ class BookViewController: UIViewController {
         usrDef.set(objData, forKey: AppDelegate.LastBookVisitedKey)
         bookObserver = _nc.addObserver(forName: BookDidChange, object: book, queue: nil){ (n: Notification) in
             
-            AppDelegate.model.save()
-            //self._delegate.executeSearch()
+            self.db.save()
             self.syncViewWithModel(book: book)
         }
     }
@@ -150,16 +128,5 @@ class BookViewController: UIViewController {
     
 }
 
-/*extension BookViewController: LibraryViewControllerDelegate{
-    
-    func libraryViewController(_ sender: LibraryViewController,
-                               didSelect selectedBook:Book){
-        stopObserving(book: _model)
-        _model = selectedBook
-        
-        startObserving(book: selectedBook)
-        
-    }
-}*/
 
 

@@ -13,6 +13,7 @@ import CoreData
 class AnnotationViewController: CoreDataCollectionViewController {
     fileprivate let sectionInsets = UIEdgeInsets(top: 50.0, left: 10.0, bottom: 50.0, right: 10.0)
     fileprivate let itemsPerRow: CGFloat = 2
+    let db = CoreDataStack.defaultStack(modelName: DATABASE)!
 }
 
 extension AnnotationViewController{
@@ -65,7 +66,7 @@ extension AnnotationViewController{
 
     func addNewNote()  {
         //Crear una nota vacía
-        let note = Note(book: self.refBook!, inContext: AppDelegate.model.context)
+        let note = Note(book: self.refBook!, inContext: db.context)
         goToNoteVC(note: note)
     }
     func goToNoteVC(note: Note) {
@@ -105,8 +106,8 @@ extension AnnotationViewController: UICollectionViewDelegateFlowLayout{
 
 extension AnnotationViewController: deleteNoteDelegate{
     internal func performDeletion(ofNote: Note) {
-        AppDelegate.model.context.delete(ofNote)
-        AppDelegate.model.save()
+        db.context.delete(ofNote)
+        db.save()
     }
 
     

@@ -10,7 +10,8 @@ import UIKit
 import CoreData
 
 class LibraryViewController: CoreDataTableViewController{
-   // var delegate : LibraryViewControllerDelegate?
+   
+   let model = CoreDataStack.defaultStack(modelName: DATABASE)!
 }
 
 // MARK: - DataSource
@@ -77,43 +78,60 @@ extension LibraryViewController{
 
 extension LibraryViewController: FavoritesDelegate{
     func deleteBookFromFavorites(book:Book){
+        
+        let t = getFavoriteTag()!
+
+        //Lo mismo para el libro:
+        let bt = BookTag(book: book, tag: t, inContext: (fetchedResultsController?.managedObjectContext)!)
+        //book.removeFromBookTags(bt)
+        //t.removeFromBooksTag(bt)
+        model.context.delete(bt)
+        model.save()
+        
+        
+    }
+    
+    func addBookToFavorites(book: Book){
+        let t = getFavoriteTag()!
+        
+        //Lo mismo para el libro:
+        let bt = BookTag(book: book, tag: t, inContext: (fetchedResultsController?.managedObjectContext)!)
+        
+        book.addToBookTags(bt)
+        model.save()
+
+    }
+    
+    func getFavoriteTag() -> Tag?{
+        // Creamos el fetchRequest para sacar el Tag Favoritos
+        let fr = NSFetchRequest<Tag>(entityName: Tag.entityName)
+        fr.fetchBatchSize = 50
+        fr.predicate = NSPredicate(format: "name == %@", TagConstants.favoriteTag)
+        let t : Tag?
         do{
-            // Creamos el fetchRequest para sacar el Tag Favoritos
-            let fr = NSFetchRequest<Tag>(entityName: Tag.entityName)
-            fr.fetchBatchSize = 50
-            fr.predicate = NSPredicate(format: "name == %@", TagConstants.favoriteTag)
-            let res = try AppDelegate.model.context.fetch(fr)
-            var t : Tag
+            let res = try model.context.fetch(fr)
+            
             if res.count>0{
                 t = res[0]
                 
             }else {
-                t = Tag(name: TagConstants.favoriteTag, inContext: AppDelegate.model.context)
+                t = Tag(name: TagConstants.favoriteTag, inContext: model.context)
             }
+            return t
 
-            //Lo mismo para el libro: 
-            let bt = BookTag(book: book, tag: t, inContext: (fetchedResultsController?.managedObjectContext)!)
-            let fr2 = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
-            fr2.fetchBatchSize = 50
-            fr2.predicate = NSPredicate(format: "SELF == %@", bt)
-            
-            let resBookTags = try AppDelegate.model.context.fetch(fr2)
-            if resBookTags.count > 0 {
-                let fRes = resBookTags[0]
-                book.removeFromBookTags(bt)
-                t.removeFromBooksTag(bt)
-                fetchedResultsController?.managedObjectContext.delete(fRes)
-                AppDelegate.model.save()
-            }
-            
         }catch let e as NSError{
-            print("Error while trying to perform a search: \n\(e)")
+            print("Error while Searching Favorite Tag: \n\(e)")
         }
+        
+        return nil
     }
+
 }
 
 //MARK: - Delegate protocol
 protocol FavoritesDelegate {
     //func libraryViewController(_ sender: LibraryViewController, didSelect selectedBook:Book)
     func deleteBookFromFavorites(book:Book)
+    func addBookToFavorites(book: Book)
+    func getFavoriteTag() -> Tag?
 }

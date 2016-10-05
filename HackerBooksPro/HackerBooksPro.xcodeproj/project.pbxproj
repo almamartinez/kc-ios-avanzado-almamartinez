@@ -109,6 +109,7 @@
 		78F64F7E1D97E7020049424F /* ModalViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModalViewController.xib; sourceTree = "<group>"; };
 		78F64F801D97E8410049424F /* ModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalViewController.swift; sourceTree = "<group>"; };
 		78F64F821D982B320049424F /* LibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
+		78FFF8AB1DA585DA001C0EAF /* Model3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model3.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -523,10 +524,11 @@
 		786C23031D8F1BBE0045B545 /* Model.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				78FFF8AB1DA585DA001C0EAF /* Model3.xcdatamodel */,
 				784091991D9719DB002074C2 /* Model2.xcdatamodel */,
 				786C23041D8F1BBE0045B545 /* Model.xcdatamodel */,
 			);
-			currentVersion = 784091991D9719DB002074C2 /* Model2.xcdatamodel */;
+			currentVersion = 78FFF8AB1DA585DA001C0EAF /* Model3.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

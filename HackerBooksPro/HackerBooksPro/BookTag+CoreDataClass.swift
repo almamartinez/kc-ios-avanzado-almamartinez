@@ -17,11 +17,30 @@ public class BookTag: NSManagedObject {
         let entidad = NSEntityDescription.entity(forEntityName: BookTag.entityName, in: context)!
         self.init(entity: entidad, insertInto: context)
         
+        self.name = tag.name!.appending(book.tittle!)
+        
         self.book = book
         self.tag = tag
         
     }
-
+    
+    /*
+    +(instancetype) bookTagWithBook: (AGTBook*) book
+    tag:(AGTTag*) tag
+    context:(NSManagedObjectContext*) context{
+    
+    // esta es la propiedad que lo hace único
+    NSString *name = [NSString stringWithFormat: @"%@+%@", book.title, tag.name];
+    
+    AGTBookTag *bt = [AGTBookTag uniqueObjectWithValue:name
+    forKey:AGTBookTagAttributes.name
+    inManagedObjectContext:context];
+    bt.tag = tag;
+    bt.book = book;
+    
+    return bt;
+    }
+*/
 }
 /*
 //MARK: - KVO: Key Value Observer

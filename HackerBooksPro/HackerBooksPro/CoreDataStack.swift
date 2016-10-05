@@ -18,6 +18,14 @@ struct CoreDataStack {
     let backgroundContext : NSManagedObjectContext
     let context : NSManagedObjectContext
     
+    private static var _defaultStack : CoreDataStack?
+    static func defaultStack(modelName: String) -> CoreDataStack?{
+        guard _defaultStack != nil else{
+            _defaultStack = CoreDataStack(modelName: modelName)
+            return _defaultStack
+        }
+        return _defaultStack
+    }
     
     // MARK:  - Initializers
     init?(modelName: String){

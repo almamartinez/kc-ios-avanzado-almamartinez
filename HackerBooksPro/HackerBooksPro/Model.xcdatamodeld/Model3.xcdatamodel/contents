@@ -19,6 +19,7 @@
         <relationship name="book" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="bookCover" inverseEntity="Book" syncable="YES"/>
     </entity>
     <entity name="BookTag" representedClassName=".BookTag" syncable="YES">
+        <attribute name="name" attributeType="String" indexed="YES" syncable="YES"/>
         <relationship name="book" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="bookTags" inverseEntity="Book" syncable="YES"/>
         <relationship name="tag" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="booksTag" inverseEntity="Tag" syncable="YES"/>
     </entity>
@@ -54,7 +55,7 @@
         <element name="Author" positionX="-2556" positionY="-6507" width="128" height="75"/>
         <element name="Book" positionX="-2324" positionY="-6507" width="128" height="150"/>
         <element name="BookCover" positionX="-2547" positionY="-6409" width="128" height="90"/>
-        <element name="BookTag" positionX="-2133" positionY="-6498" width="128" height="73"/>
+        <element name="BookTag" positionX="-2133" positionY="-6498" width="128" height="90"/>
         <element name="Localization" positionX="-2313" positionY="-6336" width="128" height="105"/>
         <element name="Note" positionX="-2331" positionY="-6354" width="128" height="135"/>
         <element name="Pdf" positionX="-2520" positionY="-6273" width="128" height="90"/>

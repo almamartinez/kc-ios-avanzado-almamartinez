@@ -15,6 +15,8 @@ class BookTableViewCell: UITableViewCell {
     static let cellID = "BookTableViewCellId"
     static let cellHeight : CGFloat = 66.0
     
+    let db = CoreDataStack.defaultStack(modelName: DATABASE)!
+    
     //MARK: - private interface
     private
     var _book : Book?
@@ -39,7 +41,7 @@ class BookTableViewCell: UITableViewCell {
     func startObserving(book: Book){
         _book = book
         _nc.addObserver(forName: AsyncDataDidEndLoading, object: _book?.bookCover, queue: nil) { (n: Notification) in
-            AppDelegate.model.save()
+            self.db.save()
             self.syncWithBook()
         }
         syncWithBook()

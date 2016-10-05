@@ -10,11 +10,13 @@ import UIKit
 import Foundation
 import CoreData
 
+let DATABASE =  "Model"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate{
 
     var window: UIWindow?
-    static let model = CoreDataStack(modelName: "Model")!
+    let model = CoreDataStack.defaultStack(modelName: DATABASE)!
     static let urlJSON = "https://t.co/K9ziV0z3SJ"
     
 
@@ -36,7 +38,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     func initializeData(doIt: Bool){
         if doIt {
             do{
-                try AppDelegate.model.dropAllData()
+                try model.dropAllData()
                 let usrDef = UserDefaults()
                 usrDef.removeObject(forKey: AppDelegate.FirstLoadKey)
                 
@@ -57,14 +59,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         let sd2 = NSSortDescriptor(key: "book.tittle", ascending: true)
         
         fr.sortDescriptors = [sd, sd2]
-         
+        
         // Creamos el fetchedResultsCtrl
         let fc = NSFetchedResultsController(fetchRequest: fr,
-                                            managedObjectContext: AppDelegate.model.context,
+                                            managedObjectContext: model.context,
                                             sectionNameKeyPath: "tag.name",
                                             cacheName: nil)
- 
-        
         // Creamos el rootVC
         let nVC = LibraryViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, style: .grouped)
         let navVC = UINavigationController(rootViewController: nVC)
@@ -72,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         let usrDef = UserDefaults()
         
         if let b = usrDef.value(forKey: AppDelegate.LastBookVisitedKey) as! Data?,
-            let book = Utils.objectWithArchivedURIRepresentation(archivedURI: b, context: AppDelegate.model.context){
+            let book = Utils.objectWithArchivedURIRepresentation(archivedURI: b, context: model.context){
             // Create the VC
             let bookVC = BookViewController(model: book, delegate: nVC)
             navVC.pushViewController(bookVC, animated: true)
@@ -93,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         let usrDef = UserDefaults()
         if usrDef.object(forKey: AppDelegate.FirstLoadKey) != nil{
             
-           loadDataToTableView()
+            loadDataToTableView()
             return
         }else{
             let modalVC = ModalViewController()
@@ -108,12 +108,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
                     DispatchQueue.main.async {
                         //Marcamos como hecha la primera carga
                         usrDef.setValue(true, forKey: AppDelegate.FirstLoadKey)
-                        AppDelegate.model.performBackgroundBatchOperation({ (bg) in
-                            let books = try! decode(books: jsonDicts, bgContext: bg)
-                            _ = Tag(name: TagConstants.favoriteTag, inContext: bg)
+                        self.model.performBackgroundBatchOperation({ (bg) in
+                            _ = try! decode(books: jsonDicts, bgContext: bg)
+                            //_ = Tag(name: TagConstants.favoriteTag, inContext: bg)
                             
-                            books.forEach{ print($0) }
-                            AppDelegate.model.save()
+                            //books.forEach{ print($0) }
+                            self.model.save()
                         })
                         
                         self.loadDataToTableView()

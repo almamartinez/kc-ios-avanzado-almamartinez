@@ -12,6 +12,7 @@ class PDFViewController: UIViewController{
     
     var _model : Book?
     var _bookObserver : NSObjectProtocol?
+    let db = CoreDataStack.defaultStack(modelName: DATABASE)!
     
     @IBOutlet weak var browserView: UIWebView!
     @IBOutlet weak var activityView: UIActivityIndicatorView!
@@ -68,7 +69,7 @@ extension PDFViewController{
         _bookObserver = nc.addObserver(forName: AsyncPdfDataDidEndLoading, object: _model?.pdf, queue: nil){ (n: Notification) in
             
             self.browserView.load((self._model?.pdf?.pdf)!, mimeType: "application/pdf", textEncodingName: "utf8", baseURL: URL(string:"https://www.google.com")!)
-            AppDelegate.model.save()
+            self.db.save()
  
         }
     }
