@@ -19,7 +19,7 @@ public class Book: NSManagedObject{
         self.init(entity: entidad, insertInto: context)
         
         self.tittle = title
-        
+        self.isFavourite = false
         
         self.pdf = Pdf(book: self, pdfUrl: urlPdf, inContext: context)
         self.bookCover = BookCover(book: self, imageUrl: urlCover, inContext: context)
