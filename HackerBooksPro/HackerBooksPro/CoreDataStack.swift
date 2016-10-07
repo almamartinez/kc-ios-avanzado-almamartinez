@@ -95,10 +95,6 @@ struct CoreDataStack {
         let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
         
         try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: dbURL, options: options)
-        
-        // Para que no me den problemas posibles cambios, quito el último libro visitado.
-        let usrDef = UserDefaults()
-        usrDef.removeObject(forKey: AppDelegate.LastBookVisitedKey)
     }
 }
 

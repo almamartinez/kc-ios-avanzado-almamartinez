@@ -72,7 +72,7 @@ func decode(book dict: JSONDictionary, bgContext: NSManagedObjectContext) throws
         
         let bt = BookTag(book: book, tag: tag, inContext: bgContext)
         
-        tag.addToBooksTag(bt)
+        tag.addToBookTags(bt)
         book.addToBookTags(bt)
     }
     try! bgContext.save()

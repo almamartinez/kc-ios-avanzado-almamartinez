@@ -15,12 +15,12 @@ class LibraryViewController: CoreDataTableViewController{
     let searchController = UISearchController(searchResultsController: nil)
 }
 
-// MARK: - DataSource
+// MARK: -
 extension LibraryViewController{
-    
+    //MARK: - Delegate & DataSource
     override func viewDidLoad() {
         super.viewDidLoad()
-        //title = "HackerBooksPro"
+        title = "HackerBooksPro"
         registerNib()
         createSearchBar()
     }
@@ -31,7 +31,6 @@ extension LibraryViewController{
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-       
         let book = getBook(atIndexPath: indexPath)
         
         // Crear la celda
@@ -46,25 +45,34 @@ extension LibraryViewController{
         
     }
     
-    func getBook(atIndexPath : IndexPath) -> Book {
-        // Averiguar el book:
-        let x = fetchedResultsController?.object(at: atIndexPath) as! BookTag
-        //print(type(of: x))
-        
-        return x.book!
-    }
     
-    //MARK: - Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+       // let x = fetchedResultsController?.object(at: indexPath) as! BookTag
+        
+        //x.managedObjectContext?.delete(x)
+        //fetchedResultsController?.managedObjectContext.delete(x)
         
         // Get the book
         let book = getBook(atIndexPath: indexPath)
+       // book.managedObjectContext?.delete(x)
         
         // Create the VC
         let bookVC = BookViewController(model: book, delegate:self)
         
         // Load it
         navigationController?.pushViewController(bookVC, animated: true)
+ 
+    }
+    
+    // Mark: - Utils
+    
+    func getBook(atIndexPath : IndexPath) -> Book {
+        // Averiguar el book:
+        let x = fetchedResultsController?.object(at: atIndexPath) as! BookTag
+        //print(type(of: x))
+        
+        return x.book!
     }
 
     
@@ -115,7 +123,7 @@ extension LibraryViewController{
 
         }
         
-        print("texto de búsqueda:... \(searchText)")
+       // print("texto de búsqueda:... \(searchText)")
         
                 // Creamos el fetchedResultsCtrl
         self.fetchedResultsController = NSFetchedResultsController(fetchRequest: fr as! NSFetchRequest<NSFetchRequestResult>,
@@ -130,15 +138,15 @@ extension LibraryViewController{
 extension LibraryViewController: FavoritesDelegate{
     func deleteBookFromFavorites(book:Book){
         
-        let t = getFavoriteTag()!
-
-        //Lo mismo para el libro:
-        let bt = BookTag(book: book, tag: t, inContext: (fetchedResultsController?.managedObjectContext)!)
-        //book.removeFromBookTags(bt)
-        //t.removeFromBooksTag(bt)
-        model.context.delete(bt)
-        model.save()
+       
         
+        let bt2 = book.bookTags?.first(where: { (bt) -> Bool in
+            ((bt as! BookTag).name?.contains(TagConstants.favoriteTag))!
+        })
+        
+        book.removeFromBookTags(bt2 as! BookTag)
+        book.managedObjectContext!.delete(bt2 as! NSManagedObject)
+        try! book.managedObjectContext!.save()        
         
     }
     
@@ -195,8 +203,7 @@ extension LibraryViewController: UISearchResultsUpdating {
 
 //MARK: - Delegate protocol
 protocol FavoritesDelegate {
-    //func libraryViewController(_ sender: LibraryViewController, didSelect selectedBook:Book)
-    func deleteBookFromFavorites(book:Book)
+        func deleteBookFromFavorites(book:Book)
     func addBookToFavorites(book: Book)
     func getFavoriteTag() -> Tag?
 }

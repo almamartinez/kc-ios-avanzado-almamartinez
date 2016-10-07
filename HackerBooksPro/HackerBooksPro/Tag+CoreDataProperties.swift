@@ -2,13 +2,12 @@
 //  Tag+CoreDataProperties.swift
 //  HackerBooksPro
 //
-//  Created by Alma Martinez on 5/10/16.
+//  Created by Alma Martinez on 7/10/16.
 //  Copyright © 2016 Alma Martinez. All rights reserved.
 //
 
 import Foundation
 import CoreData
- 
 
 extension Tag {
 
@@ -18,23 +17,23 @@ extension Tag {
 
     @NSManaged public var name: String?
     @NSManaged public var order: String?
-    @NSManaged public var booksTag: NSSet?
+    @NSManaged public var bookTags: NSSet?
 
 }
 
-// MARK: Generated accessors for booksTag
+// MARK: Generated accessors for bookTags
 extension Tag {
 
-    @objc(addBooksTagObject:)
-    @NSManaged public func addToBooksTag(_ value: BookTag)
+    @objc(addBookTagsObject:)
+    @NSManaged public func addToBookTags(_ value: BookTag)
 
-    @objc(removeBooksTagObject:)
-    @NSManaged public func removeFromBooksTag(_ value: BookTag)
+    @objc(removeBookTagsObject:)
+    @NSManaged public func removeFromBookTags(_ value: BookTag)
 
-    @objc(addBooksTag:)
-    @NSManaged public func addToBooksTag(_ values: NSSet)
+    @objc(addBookTags:)
+    @NSManaged public func addToBookTags(_ values: NSSet)
 
-    @objc(removeBooksTag:)
-    @NSManaged public func removeFromBooksTag(_ values: NSSet)
+    @objc(removeBookTags:)
+    @NSManaged public func removeFromBookTags(_ values: NSSet)
 
 }

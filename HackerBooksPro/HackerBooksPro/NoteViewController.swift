@@ -39,6 +39,7 @@ class NoteViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         syncViewModel()
+        try! model.managedObjectContext?.save()
     }
     
     

@@ -12,14 +12,15 @@ import CoreData
 
 class BookViewController: UIViewController {
 
-    let db = CoreDataStack.defaultStack(modelName: DATABASE)!
-
+    //let db = CoreDataStack.defaultStack(modelName: DATABASE)!
+    let db : NSManagedObjectContext
     //MARK: - Init
     var _model : Book
     let _delegate : FavoritesDelegate
     
     init(model: Book, delegate: FavoritesDelegate){
         _model = model
+        db = _model.managedObjectContext!
         _delegate = delegate
        // _delegate = withDelegate
         super.init(nibName: nil, bundle: nil)
@@ -55,7 +56,7 @@ class BookViewController: UIViewController {
         
         // Creamos el fetchedResultsCtrl
         let fc = NSFetchedResultsController(fetchRequest: fr,
-                                            managedObjectContext: db.context,
+                                            managedObjectContext: db,
                                             sectionNameKeyPath: nil,
                                             cacheName: nil)
         let notesVC = AnnotationViewController(fetchedResultsController: fc as! NSFetchedResultsController<NSFetchRequestResult>, layout: UICollectionViewFlowLayout(), book: _model)
@@ -116,7 +117,7 @@ class BookViewController: UIViewController {
         usrDef.set(objData, forKey: AppDelegate.LastBookVisitedKey)
         bookObserver = _nc.addObserver(forName: BookDidChange, object: book, queue: nil){ (n: Notification) in
             
-            self.db.save()
+            try! self.db.save()
             self.syncViewWithModel(book: book)
         }
     }
