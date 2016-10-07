@@ -86,14 +86,43 @@ extension LibraryViewController{
         definesPresentationContext = true
         tableView.tableHeaderView = searchController.searchBar
     }
+    
     func fetchEntries(searchText: String) {
         
-        if (searchText.characters.count <= 0){
+        let fr = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
+        fr.fetchBatchSize = 50
+        
+        let sd = NSSortDescriptor(key: "tag.name", ascending: true)
+        let sd2 = NSSortDescriptor(key: "book.tittle", ascending: true)
+        fr.sortDescriptors = [sd, sd2]
+
+       /* if (searchText.characters.count > 0 && searchText.characters.count <= 3){
             return
+        }*/
+        
+        //if (searchText.characters.count > 3){
+        if (searchText.characters.count > 0){
+            
+            let str = " LIKE '*".appending(searchText).appending("*'")
+            
+            let pred = NSPredicate(format: "book.tittle".appending(str) )
+            let pred2 = NSPredicate(format: "tag.name".appending(str))
+            let pred3 = NSPredicate(format: "ANY book.authors.name ".appending(str))
+            
+            let compPred = NSCompoundPredicate(orPredicateWithSubpredicates: [pred, pred2, pred3])
+            
+            fr.predicate = compPred
+
         }
+        
         print("texto de búsqueda:... \(searchText)")
         
-        //tableView.reloadData()
+                // Creamos el fetchedResultsCtrl
+        self.fetchedResultsController = NSFetchedResultsController(fetchRequest: fr as! NSFetchRequest<NSFetchRequestResult>,
+                                            managedObjectContext: model.context,
+                                            sectionNameKeyPath: "tag.name",
+                                            cacheName: nil)
+
     }
     
 }
