@@ -8,12 +8,20 @@
 
 import Foundation
 import CoreData
+import CoreLocation
 import UIKit
 
 
 public class Note: NSManagedObject {
     static let  entityName = "Note"
     
+    var locationManager : CLLocationManager?
+    
+    var hasLocation: Bool {
+        get {
+            return self.localization != nil
+        }
+    }
     
     convenience init(book: Book,
                      image: UIImage,
@@ -105,6 +113,16 @@ extension Note{
         super.awakeFromInsert()
         
         setupKVO()
+        
+        let status = CLLocationManager.authorizationStatus()
+        if (((status == .authorizedAlways) || (status == .authorizedWhenInUse) || (status == .notDetermined))
+            && (CLLocationManager.locationServicesEnabled())){
+            
+            locationManager = CLLocationManager()
+            locationManager?.delegate = self
+            locationManager?.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager?.startUpdatingLocation()
+        }
     }
     
     // Se llama un huevo de veces
@@ -122,7 +140,45 @@ extension Note{
     
 }
 
+extension Note : CLLocationManagerDelegate{
+ 
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        
+        //lo paramos
+        locationManager?.stopUpdatingLocation()
+        locationManager = nil
+        
+        // Última localización
+        if let loc = locations.last {
+            let reg = NSFetchRequest<Localization>(entityName: Localization.entityName)
+            let lat = NSPredicate(format: "abs(latitude) - abs(%lf) < 0.001", loc.coordinate.latitude)
+            let long = NSPredicate(format: "abs(longitude) - abs(%lf) < 0.001", loc.coordinate.longitude)
+            
+            reg.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [lat,long])
+            
+            do{
+                if let results = try self.managedObjectContext?.fetch(reg){
+                
+                    if results.count > 0{
+                        let localization = results[0]
+                        print("dirección: %@", localization.address)
+                        localization.addToNotes(self)
+                        self.localization = localization
+                    }else{
+                        //Creamos el Location
+                         self.localization = Localization(withLocation: loc, forNote: self, inContext: self.managedObjectContext!)
+                    }
+                }
+            }catch let e as NSError{
+                print("Error while Adding a Location: \n\(e)")                
+            }
+            
 
+           
+        }
+    }
+}
 
 
 

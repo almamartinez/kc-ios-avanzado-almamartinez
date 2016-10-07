@@ -2,7 +2,7 @@
 //  Note+CoreDataProperties.swift
 //  HackerBooksPro
 //
-//  Created by Alma Martinez on 24/9/16.
+//  Created by Alma Martinez on 7/10/16.
 //  Copyright © 2016 Alma Martinez. All rights reserved.
 //
 

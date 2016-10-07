@@ -104,15 +104,40 @@ extension AnnotationViewController: UICollectionViewDelegateFlowLayout{
     }
 }
 
-extension AnnotationViewController: deleteNoteDelegate{
+extension AnnotationViewController: actionsOnNotesDelegate{
     internal func performDeletion(ofNote: Note) {
         db.context.delete(ofNote)
         db.save()
     }
 
+    func share(note: Note){
+        //Crear un uiActivityController
+        let avc = UIActivityViewController(activityItems: arrayOfItems(fromNote: note), applicationActivities: nil)
+        
+        // lo presentamos
+        self.present(avc, animated: true, completion: nil)
+        
+    }
     
+    func arrayOfItems(fromNote note:Note) -> [AnyObject] {
+        var arr = [AnyObject]()
+        
+        // El título del libro es obligatorio
+        arr.append(note.book?.tittle as AnyObject)
+        
+        if let txt = note.text{
+            arr.append(txt as AnyObject)
+        }
+        
+        if let img = note.photo?.image{
+            arr.append(img as AnyObject)
+        }
+        
+        return arr as [AnyObject]
+    }
 }
 
-protocol deleteNoteDelegate {
+protocol actionsOnNotesDelegate {
     func performDeletion(ofNote: Note)
+    func share(note: Note)
 }

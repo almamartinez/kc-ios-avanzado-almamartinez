@@ -22,7 +22,7 @@ class NoteViewCell: UICollectionViewCell {
     private
     var _noteObserver : NSObjectProtocol?
     
-    var delegate: deleteNoteDelegate?
+    var delegate: actionsOnNotesDelegate?
     
     
     @IBOutlet weak var textoNota: UILabel!
@@ -31,7 +31,7 @@ class NoteViewCell: UICollectionViewCell {
     // The view will directly observe the model
     // This is OK, when the view is highly specific as
     // in this case
-    func startContent(note: Note, withDelegate: deleteNoteDelegate?){
+    func startContent(note: Note, withDelegate: actionsOnNotesDelegate?){
         _note = note
         delegate = withDelegate
         syncWithNote()
@@ -49,6 +49,9 @@ class NoteViewCell: UICollectionViewCell {
         viewWillDisappear()
     }
     
+    @IBAction func shareNote(_ sender: UIButton) {
+        delegate?.share(note: _note!)
+    }
     //MARK: - Lifecycle
     
     // Sets the view in a neutral state, before being reused

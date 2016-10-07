@@ -11,7 +11,8 @@ import CoreData
 
 class LibraryViewController: CoreDataTableViewController{
    
-   let model = CoreDataStack.defaultStack(modelName: DATABASE)!
+    let model = CoreDataStack.defaultStack(modelName: DATABASE)!
+    let searchController = UISearchController(searchResultsController: nil)
 }
 
 // MARK: - DataSource
@@ -21,6 +22,7 @@ extension LibraryViewController{
         super.viewDidLoad()
         //title = "HackerBooksPro"
         registerNib()
+        createSearchBar()
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -73,6 +75,26 @@ extension LibraryViewController{
         tableView.register(nib, forCellReuseIdentifier: BookTableViewCell.cellID)
     }
     
+    private func createSearchBar(){
+        searchController.searchBar.placeholder = "Search..."
+        searchController.searchBar.backgroundColor = UIColor.clear
+        searchController.searchBar.searchBarStyle = UISearchBarStyle.minimal
+        searchController.searchBar.tintColor = UIColor.blue
+        
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        definesPresentationContext = true
+        tableView.tableHeaderView = searchController.searchBar
+    }
+    func fetchEntries(searchText: String) {
+        
+        if (searchText.characters.count <= 0){
+            return
+        }
+        print("texto de búsqueda:... \(searchText)")
+        
+        //tableView.reloadData()
+    }
     
 }
 
@@ -126,6 +148,20 @@ extension LibraryViewController: FavoritesDelegate{
         return nil
     }
 
+}
+
+extension LibraryViewController: UISearchBarDelegate {
+    // MARK: - UISearchBar Delegate
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        fetchEntries(searchText: searchBar.text!)
+    }
+}
+
+extension LibraryViewController: UISearchResultsUpdating {
+    // MARK: - UISearchResultsUpdating Delegate
+    func updateSearchResults(for searchController: UISearchController) {
+        fetchEntries(searchText: searchController.searchBar.text!)
+    }
 }
 
 //MARK: - Delegate protocol

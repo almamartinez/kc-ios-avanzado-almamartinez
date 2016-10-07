@@ -8,22 +8,40 @@
 
 import Foundation
 import CoreData
+import CoreLocation
+import Contacts
 
 
 public class Localization: NSManagedObject {
     static let entityName = "Localization"
     
-    convenience init(note: Note, inAddress: String, longitudLocation: Float, latitudLocation: Float,
+    convenience init(withLocation loc: CLLocation, forNote: Note,
                      inContext context: NSManagedObjectContext){
         
-        let ent = NSEntityDescription.entity(forEntityName: Photo.entityName, in: context)!
+        let ent = NSEntityDescription.entity(forEntityName: Localization.entityName, in: context)!
         
         self.init(entity: ent, insertInto: context)
         
-        self.note = note
-        self.address = inAddress
-        self.latitude = latitudLocation
-        self.longitud = longitudLocation
+        self.addToNotes(forNote)
+
+        self.latitude = loc.coordinate.latitude
+        self.longitud = loc.coordinate.longitude
+
+        //Dirección
+        let coder = CLGeocoder()
+        coder.reverseGeocodeLocation(loc) { (placemarks, error) in
+            if let e = error{
+                print(e)
+            }else{
+                if let myPlacemark = placemarks?.last,
+                    let myAddressDictionary = myPlacemark.addressDictionary,
+                    let myAddressStrings : Array<String> = myAddressDictionary["FormattedAddressLines"] as! Array<String>?
+                {
+                    self.address = myAddressStrings.joined(separator: " ")
+                    print("Dirección: %@",self.address)
+                }
                 
+            }
+        }
     }
 }
