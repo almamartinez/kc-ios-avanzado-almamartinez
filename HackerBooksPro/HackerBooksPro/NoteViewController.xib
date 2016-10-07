@@ -20,11 +20,14 @@
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="yps-qk-0U1">
                     <subviews>
                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="9Uw-A4-g8D">
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardAppearance="alert" returnKeyType="done"/>
                         </textView>
                         <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s2Q-hq-9As">
+                            <constraints>
+                                <constraint firstAttribute="height" constant="43" id="YfL-E3-SXk"/>
+                            </constraints>
                             <items>
                                 <barButtonItem title="Photo" id="xC0-iC-lNR">
                                     <connections>
@@ -34,17 +37,14 @@
                             </items>
                         </toolbar>
                     </subviews>
-                    <constraints>
-                        <constraint firstAttribute="trailing" secondItem="9Uw-A4-g8D" secondAttribute="trailing" id="wFJ-Tk-Pv8"/>
-                    </constraints>
                 </stackView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="yps-qk-0U1" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Gcp-WU-VtK"/>
-                <constraint firstAttribute="bottom" secondItem="yps-qk-0U1" secondAttribute="bottom" id="LQ5-wh-pDO"/>
-                <constraint firstItem="yps-qk-0U1" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="ZZw-3G-TFl"/>
-                <constraint firstAttribute="trailing" secondItem="yps-qk-0U1" secondAttribute="trailing" id="v2G-Si-J8f"/>
+                <constraint firstItem="yps-qk-0U1" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="AWa-vf-1WB"/>
+                <constraint firstAttribute="bottom" secondItem="yps-qk-0U1" secondAttribute="bottom" id="DTc-dm-Pvj"/>
+                <constraint firstAttribute="trailing" secondItem="yps-qk-0U1" secondAttribute="trailing" id="lw7-Iz-XU4"/>
+                <constraint firstItem="yps-qk-0U1" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="tsl-JM-nMo"/>
             </constraints>
             <point key="canvasLocation" x="33.5" y="53.5"/>
         </view>
